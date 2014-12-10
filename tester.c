@@ -10,6 +10,9 @@
 #include <netinet/in.h>
 #include <time.h>
 
+#include <mach/clock.h>
+#include <mach/mach.h>
+
 // memcached defines
 #define MAGIC_NUM        0x80
 #define MAGIC_NUM_OFFSET 0
@@ -17,6 +20,20 @@
 #define OPCODE_OFFSET    1
 
 //#define DEBUG_PRINTS 0
+
+
+#include <mach/mach_time.h>
+
+double conversion_factor;
+
+void Init() {
+  mach_timebase_info_data_t timebase;
+  mach_timebase_info(&timebase);
+  conversion_factor = (double)timebase.numer / (double)timebase.denom;
+}
+
+
+
 
 int init_sock() {
     int sockfd;
@@ -33,6 +50,7 @@ int init_sock() {
 uint64_t do_get_request(char* request_key, char* expected_value, int sockfd, struct sockaddr_in * servaddr, int reqno) {
     uint8_t requestpack[32 + strlen(request_key)];
     uint16_t swap_bytes;
+
 
     swap_bytes = strlen(request_key) << 8 | ((strlen(request_key) >> 8) & 0xFF);
 
@@ -63,19 +81,25 @@ uint64_t do_get_request(char* request_key, char* expected_value, int sockfd, str
     int n;    
     char recvline[1000];
 
-    /* send a message to the server */
-    struct timeval time1;
-    struct timeval time2;
-    clock_gettime(CLOCK_MONOTONIC, &time1);
+
+    // start timer
+uint64_t t1, t2;
+
+  Init();
+
+  t1 = mach_absolute_time();
     if (sendto(sockfd, (char*)requestpack, 32+strlen(request_key), 0, (struct sockaddr *)servaddr, sizeof(*servaddr)) < 0) {
             perror("sendto failed");
             return 0;
     }
    
     n=recvfrom(sockfd,recvline,10000,0,NULL,NULL);
-//    gettimeofday(&time2, NULL);
-    clock_gettime(CLOCK_MONOTONIC, &time2)
-//    printf("\nrecvd\n");
+
+    // end timer
+
+t2 = mach_absolute_time();
+
+  double duration_ns = (double)(t2 - t1) * conversion_factor;  
 
 #ifdef DEBUG_PRINTS
     for (int i = 0; i < 32; i++) {
@@ -87,14 +111,8 @@ uint64_t do_get_request(char* request_key, char* expected_value, int sockfd, str
     }
 #endif
 
-//    printf("time:\n");
-    uint64_t diff = time2.tv_usec - time1.tv_usec;
-    if (time2.tv_usec < time1.tv_usec) {
-        printf("WAT");
-        exit(0);
-    }
-//    printf("%llu\n", diff);
-    return diff;
+    return duration_ns/1000;
+
 }
 
 
@@ -125,11 +143,11 @@ int sockfd = init_sock();
 
 uint64_t sum_latency_software = 0;
 uint64_t sum_latency_hardware = 0;
-uint64_t rounds = 200;
+uint64_t rounds = 20000;
 
 
 for (int i = 0; i < rounds; i++) {
-    printf("round # %llu \n", i);
+    //printf("round # %llu \n", i);
     sum_latency_hardware += do_get_request("key_a", "asdf", sockfd, &servaddr, 1);
     sum_latency_software += do_get_request("WAT_A", "asdf", sockfd, &servaddr, 1);
 }
