@@ -27,11 +27,8 @@ int init_sock() {
 
 
 
-int do_get_request(char* request_key, char* expected_value, int sockfd, struct sockaddr_in * servaddr) {
+int do_get_request(char* request_key, char* expected_value, int sockfd, struct sockaddr_in * servaddr, int reqno) {
     uint8_t requestpack[32 + strlen(request_key)];
-//    int sockfd;
-
-
     uint16_t swap_bytes;
 
     swap_bytes = strlen(request_key) << 8 | ((strlen(request_key) >> 8) & 0xFF);
@@ -40,7 +37,7 @@ int do_get_request(char* request_key, char* expected_value, int sockfd, struct s
         requestpack[i] = 0x00;
     }
 
-    requestpack[5] = 0x1;
+    requestpack[5] = reqno;
 
     requestpack[MAGIC_NUM_OFFSET+8] = MAGIC_NUM;
     requestpack[OPCODE_OFFSET+8] = GET_OPCODE;
@@ -62,29 +59,27 @@ int do_get_request(char* request_key, char* expected_value, int sockfd, struct s
         printf("%x ", requestpack[i]);
     }
 
-char *my_message = (char*)requestpack;
 
-/* send a message to the server */
-if (sendto(sockfd, my_message, 32+strlen(request_key), 0, (struct sockaddr *)servaddr, sizeof(*servaddr)) < 0) {
-        perror("sendto failed");
+    /* send a message to the server */
+    if (sendto(sockfd, (char*)requestpack, 32+strlen(request_key), 0, (struct sockaddr *)servaddr, sizeof(*servaddr)) < 0) {
+            perror("sendto failed");
             return 0;
+    }
+   
+    int n;    
+    char recvline[1000];
+    n=recvfrom(sockfd,recvline,10000,0,NULL,NULL);
+    printf("\nrecvd\n");
+    for (int i = 0; i < 32; i++) {
+        if (i % 4 == 0) {
+            printf("\n");
+        }
+ 
+        printf("%x ", 0xFF & recvline[i]);
+    }
+
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-}
-
 
 
 int main(int argc, char *argv[])
@@ -110,63 +105,18 @@ if (!hp) {
 /* put the host's address into the server address structure */
 memcpy((void *)&servaddr.sin_addr, hp->h_addr_list[0], hp->h_length);
 
-
-    
-    
-    
-    
-    
-    /*  memcached_server_st *servers = NULL;
-  memcached_return rc;
-  char *key= "keystring";
-  char *value= "keyvalue";
-
-  char *server_strings = "127.0.0.1";
-
-  char * config_string = "--SERVER=127.0.0.1 --BINARY-PROTOCOL";
-  memcached_st *memc = memcached(config_string, strlen(config_string));
-
-//  servers= memcached_server_list_append(servers, "localhost", 11211, &rc);
-//  rc= memcached_server_push(memc, servers);
-
-//  memcached_behavior_set(memc, MEMCACHED_BEHAVIOR_USE_UDP, 1);
-
-//  rc= memcached_set(memc, key, strlen(key), value, strlen(value), (time_t)0, (uint32_t)0);
-
-
-//  if (rc == MEMCACHED_SUCCESS)
-//    fprintf(stderr,"Key stored successfully\n");
-//  else
-//    fprintf(stderr,"Couldn't store key: %s\n",memcached_strerror(memc, rc));
-
-
-
-  memcached_behavior_set(memc, MEMCACHED_BEHAVIOR_USE_UDP, 1);
-
-  size_t vallen;
-  uint32_t fl;
-  memcached_return_t err;
-
-  char * wat  = memcached_get(memc, key, strlen(key), &vallen, &fl, &err);
-
-  printf("%s", wat);
-
-
-// build packet
-*/
-
     int sockfd = init_sock();
-    do_get_request("key_a", "asdf", sockfd, &servaddr);
 
 
 
 
+    do_get_request("key_a", "asdf", sockfd, &servaddr, 1);
+    do_get_request("key_b", "asdf", sockfd, &servaddr, 1);
 
 
 
 
   return 0;
 }
-
 
 
