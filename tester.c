@@ -15,6 +15,8 @@
 #define GET_OPCODE       0x00
 #define OPCODE_OFFSET    1
 
+//#define DEBUG_PRINTS 0
+
 int init_sock() {
     int sockfd;
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -50,7 +52,7 @@ int do_get_request(char* request_key, char* expected_value, int sockfd, struct s
         requestpack[32+i] = request_key[i];
     }
 
-
+#ifdef DEBUG_PRINTS
     for (int i = 0; i < 32+strlen(request_key); i++) {
         if (i % 4 == 0) {
             printf("\n");
@@ -58,18 +60,26 @@ int do_get_request(char* request_key, char* expected_value, int sockfd, struct s
  
         printf("%x ", requestpack[i]);
     }
+#endif
 
+    int n;    
+    char recvline[1000];
 
     /* send a message to the server */
+    struct timeval time1;
+    struct timeval time2;
+    gettimeofday(&time1, NULL);
     if (sendto(sockfd, (char*)requestpack, 32+strlen(request_key), 0, (struct sockaddr *)servaddr, sizeof(*servaddr)) < 0) {
             perror("sendto failed");
             return 0;
     }
    
-    int n;    
-    char recvline[1000];
     n=recvfrom(sockfd,recvline,10000,0,NULL,NULL);
+    gettimeofday(&time2, NULL);
+
     printf("\nrecvd\n");
+
+#ifdef DEBUG_PRINTS
     for (int i = 0; i < 32; i++) {
         if (i % 4 == 0) {
             printf("\n");
@@ -77,20 +87,23 @@ int do_get_request(char* request_key, char* expected_value, int sockfd, struct s
  
         printf("%x ", 0xFF & recvline[i]);
     }
+#endif
 
-
+    printf("time:\n");
+    uint64_t diff = time2.tv_usec - time1.tv_usec;
+    printf("%llu\n", diff);
 }
 
 
 int main(int argc, char *argv[])
 {
 
-char* host = "127.0.0.1";
+//char* host = "127.0.0.1";
+char* host = "172.16.1.2";
 
 struct hostent *hp;     /* host information */
 struct sockaddr_in servaddr;    /* server address */
 
-/* fill in the server's address and data */
 memset((char*)&servaddr, 0, sizeof(servaddr));
 servaddr.sin_family = AF_INET;
 servaddr.sin_port = htons(11211);
@@ -105,14 +118,16 @@ if (!hp) {
 /* put the host's address into the server address structure */
 memcpy((void *)&servaddr.sin_addr, hp->h_addr_list[0], hp->h_length);
 
-    int sockfd = init_sock();
+int sockfd = init_sock();
+
+uint64_t sum_latency;
+uint64_t rounds = 200;
 
 
-
-
+for (int i = 0; i < rounds; i++) {
     do_get_request("key_a", "asdf", sockfd, &servaddr, 1);
-    do_get_request("key_b", "asdf", sockfd, &servaddr, 1);
-
+//    do_get_request("key_b", "asdf", sockfd, &servaddr, 1);
+}
 
 
 
