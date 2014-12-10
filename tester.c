@@ -46,7 +46,7 @@ int verify_response(char * result_packet, char * expected_value) {
     int a = strlen(expected_value);
     for (int b = 0; b < a; b++) {
         if (result_packet[36+b] != expected_value[b]) {
-            printf("%c vs %c\n", result_packet[24+b], expected_value[b]);
+            printf("%c vs %c\n", result_packet[36+b], expected_value[b]);
             return 0;
         }
 
@@ -132,8 +132,8 @@ t2 = mach_absolute_time();
 int main(int argc, char *argv[])
 {
 
-char* host = "127.0.0.1";
-//char* host = "172.16.1.2";
+//char* host = "127.0.0.1";
+char* host = "172.16.1.2";
 
 struct hostent *hp;     /* host information */
 struct sockaddr_in servaddr;    /* server address */
@@ -162,8 +162,8 @@ uint64_t rounds = 20000;
 for (int i = 0; i < rounds; i++) {
     //printf("round # %llu \n", i);
     uint64_t result = 
-    printf("h: %llu\n", do_get_request("key_a", "asdf", sockfd, &servaddr, 1));
-    printf("s: %llu\n", do_get_request("WAT_A", "asdf", sockfd, &servaddr, 1));
+    printf("h: %llu\n", do_get_request("199", "199", sockfd, &servaddr, 1));
+//    printf("s: %llu\n", do_get_request("WAT_A", "asdf", sockfd, &servaddr, 1));
 }
 
 //printf("rounds: %llu\n", rounds);

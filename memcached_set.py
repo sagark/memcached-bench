@@ -5,7 +5,7 @@ mc = pylibmc.Client(["172.16.1.2"])
 
 def load():
     for x in range(200):
-        mc[str(x)] = str(x)
+        mc[str(x)] = str(x) + "hello"
 
 
 def check():
