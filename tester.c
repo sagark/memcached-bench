@@ -27,7 +27,7 @@ int init_sock() {
 
 
 
-int do_get_request(char* request_key, char* expected_value, int sockfd) {
+int do_get_request(char* request_key, char* expected_value, int sockfd, struct sockaddr_in * servaddr) {
     uint8_t requestpack[32 + strlen(request_key)];
 //    int sockfd;
 
@@ -62,30 +62,10 @@ int do_get_request(char* request_key, char* expected_value, int sockfd) {
         printf("%x ", requestpack[i]);
     }
 
-
-char* host = "127.0.0.1";
-
-struct hostent *hp;     /* host information */
-struct sockaddr_in servaddr;    /* server address */
 char *my_message = (char*)requestpack;
 
-/* fill in the server's address and data */
-memset((char*)&servaddr, 0, sizeof(servaddr));
-servaddr.sin_family = AF_INET;
-servaddr.sin_port = htons(11211);
-
-/* look up the address of the server given its name */
-hp = gethostbyname(host);
-if (!hp) {
-        fprintf(stderr, "could not obtain address of %s\n", host);
-            return 0;
-}
-
-/* put the host's address into the server address structure */
-memcpy((void *)&servaddr.sin_addr, hp->h_addr_list[0], hp->h_length);
-
 /* send a message to the server */
-if (sendto(sockfd, my_message, 32+strlen(request_key), 0, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
+if (sendto(sockfd, my_message, 32+strlen(request_key), 0, (struct sockaddr *)servaddr, sizeof(*servaddr)) < 0) {
         perror("sendto failed");
             return 0;
 }
@@ -109,7 +89,34 @@ if (sendto(sockfd, my_message, 32+strlen(request_key), 0, (struct sockaddr *)&se
 
 int main(int argc, char *argv[])
 {
-/*  memcached_server_st *servers = NULL;
+
+char* host = "127.0.0.1";
+
+struct hostent *hp;     /* host information */
+struct sockaddr_in servaddr;    /* server address */
+
+/* fill in the server's address and data */
+memset((char*)&servaddr, 0, sizeof(servaddr));
+servaddr.sin_family = AF_INET;
+servaddr.sin_port = htons(11211);
+
+/* look up the address of the server given its name */
+hp = gethostbyname(host);
+if (!hp) {
+        fprintf(stderr, "could not obtain address of %s\n", host);
+            return 0;
+}
+
+/* put the host's address into the server address structure */
+memcpy((void *)&servaddr.sin_addr, hp->h_addr_list[0], hp->h_length);
+
+
+    
+    
+    
+    
+    
+    /*  memcached_server_st *servers = NULL;
   memcached_return rc;
   char *key= "keystring";
   char *value= "keyvalue";
@@ -149,7 +156,7 @@ int main(int argc, char *argv[])
 */
 
     int sockfd = init_sock();
-    do_get_request("key_a", "asdf", sockfd);
+    do_get_request("key_a", "asdf", sockfd, &servaddr);
 
 
 
