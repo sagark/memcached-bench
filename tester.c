@@ -42,6 +42,19 @@ int init_sock() {
     return sockfd;
 }
 
+int verify_response(char * result_packet, char * expected_value) {
+    int a = strlen(expected_value);
+    for (int b = 0; b < a; b++) {
+        if (result_packet[36+b] != expected_value[b]) {
+            printf("%c vs %c\n", result_packet[24+b], expected_value[b]);
+            return 0;
+        }
+
+    }
+    return 1;
+}
+
+
 uint64_t do_get_request(char* request_key, char* expected_value, int sockfd, struct sockaddr_in * servaddr, int reqno) {
     uint8_t requestpack[32 + strlen(request_key)];
     uint16_t swap_bytes;
@@ -68,6 +81,9 @@ uint64_t do_get_request(char* request_key, char* expected_value, int sockfd, str
     for (int i = 0; i < 32+strlen(request_key); i++) {
         if (i % 4 == 0) {
             printf("\n");
+        }
+        if (requestpack[i] == 'a') {
+            printf("INDEX: %d\n", i);
         }
         printf("%x ", requestpack[i]);
     }
@@ -97,15 +113,18 @@ t2 = mach_absolute_time();
   double duration_ns = (double)(t2 - t1) * conversion_factor;  
 
 #ifdef DEBUG_PRINTS
-    for (int i = 0; i < 32; i++) {
+    for (int i = 0; i < 64; i++) {
         if (i % 4 == 0) {
             printf("\n");
         }
  
-        printf("%x ", 0xFF & recvline[i]);
+        printf("%c ", 0xFF & recvline[i]);
     }
 #endif
-
+    if (!verify_response(recvline, expected_value)) {
+        printf("VERIFY FAIL");
+        exit(0);
+    }
     return duration_ns/1000;
 }
 
@@ -113,8 +132,8 @@ t2 = mach_absolute_time();
 int main(int argc, char *argv[])
 {
 
-//char* host = "127.0.0.1";
-char* host = "172.16.1.2";
+char* host = "127.0.0.1";
+//char* host = "172.16.1.2";
 
 struct hostent *hp;     /* host information */
 struct sockaddr_in servaddr;    /* server address */
