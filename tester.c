@@ -147,10 +147,10 @@ for (int i = 0; i < rounds; i++) {
     printf("s: %llu\n", do_get_request("WAT_A", "asdf", sockfd, &servaddr, 1));
 }
 
-printf("rounds: %llu\n", rounds);
-printf("sum_latency_software: %llu\n", sum_latency_software);
-printf("hardware avg: %f\n", ((double)sum_latency_hardware) / ((double) rounds));
-printf("software avg: %f\n", ((double)sum_latency_software) / ((double) rounds));
+//printf("rounds: %llu\n", rounds);
+//printf("sum_latency_software: %llu\n", sum_latency_software);
+//printf("hardware avg: %f\n", ((double)sum_latency_hardware) / ((double) rounds));
+//printf("software avg: %f\n", ((double)sum_latency_software) / ((double) rounds));
 
 return 0;
 }

@@ -4,8 +4,6 @@ from pylab import *
 
 a = file("out");
 
-
-
 h = []
 s = []
 
@@ -35,7 +33,7 @@ for x in range(11):
     percentilesh.append(np.percentile(h, 10*x))
     percentiless.append(np.percentile(s, 10*x))
 
-
+print(a)
 print(percentilesh)
 print(percentiless)
 
@@ -46,5 +44,7 @@ print(max(s))
 
 
 plot(a, percentilesh)
+plot(a, percentiless)
+grid(True)
 savefig("test.png")
 show()
