@@ -32,9 +32,6 @@ void Init() {
   conversion_factor = (double)timebase.numer / (double)timebase.denom;
 }
 
-
-
-
 int init_sock() {
     int sockfd;
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -44,8 +41,6 @@ int init_sock() {
     }
     return sockfd;
 }
-
-
 
 uint64_t do_get_request(char* request_key, char* expected_value, int sockfd, struct sockaddr_in * servaddr, int reqno) {
     uint8_t requestpack[32 + strlen(request_key)];
@@ -112,7 +107,6 @@ t2 = mach_absolute_time();
 #endif
 
     return duration_ns/1000;
-
 }
 
 
@@ -148,8 +142,9 @@ uint64_t rounds = 20000;
 
 for (int i = 0; i < rounds; i++) {
     //printf("round # %llu \n", i);
-    sum_latency_hardware += do_get_request("key_a", "asdf", sockfd, &servaddr, 1);
-    sum_latency_software += do_get_request("WAT_A", "asdf", sockfd, &servaddr, 1);
+    uint64_t result = 
+    printf("h: %llu\n", do_get_request("key_a", "asdf", sockfd, &servaddr, 1));
+    printf("s: %llu\n", do_get_request("WAT_A", "asdf", sockfd, &servaddr, 1));
 }
 
 printf("rounds: %llu\n", rounds);
