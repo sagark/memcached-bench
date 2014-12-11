@@ -166,13 +166,13 @@ uint64_t rounds = 20000;
 for (int i = 0; i < rounds; i++) {
     //printf("round # %llu \n", i);
     //uint64_t result = 
-    printf("0: %llu\n", do_get_request("a", "0", sockfd, &servaddr, 1));
+//    printf("0: %llu\n", do_get_request("a", "0", sockfd, &servaddr, 1));
 //    printf("1: %llu\n", do_get_request("1hello", "1hello2", sockfd, &servaddr, 1));
-//    printf("1: %llu\n", do_get_request("99hello", "watwatwat", sockfd, &servaddr, 1));
+    printf("2: %llu\n", do_get_request("94hello", "94hello2", sockfd, &servaddr, 1));
 
-//    printf("2: %llu\n", do_get_request("2hello", "2hello2", sockfd, &servaddr, 1));
-//    printf("3: %llu\n", do_get_request("3hello", "3hello2", sockfd, &servaddr, 1));
-//    printf("3: %llu\n", do_get_request("199hello", "199hello2", sockfd, &servaddr, 1));
+//    printf("3: %llu\n", do_get_request("2hello", "2hello2", sockfd, &servaddr, 1));
+//    printf("4: %llu\n", do_get_request("3hello", "3hello2", sockfd, &servaddr, 1));
+//    printf("5: %llu\n", do_get_request("199hello", "199hello2", sockfd, &servaddr, 1));
 
 
 
