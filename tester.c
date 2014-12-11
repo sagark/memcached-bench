@@ -158,12 +158,25 @@ uint64_t sum_latency_software = 0;
 uint64_t sum_latency_hardware = 0;
 uint64_t rounds = 20000;
 
+/*void fill_string (char* buf, int n) {
+    
+*/
+
 
 for (int i = 0; i < rounds; i++) {
     //printf("round # %llu \n", i);
-    uint64_t result = 
-    printf("h: %llu\n", do_get_request("199", "199", sockfd, &servaddr, 1));
-//    printf("s: %llu\n", do_get_request("WAT_A", "asdf", sockfd, &servaddr, 1));
+    //uint64_t result = 
+    printf("0: %llu\n", do_get_request("0hello", "0hello", sockfd, &servaddr, 1));
+    printf("1: %llu\n", do_get_request("1hello", "1hello", sockfd, &servaddr, 1));
+    printf("2: %llu\n", do_get_request("2hello", "2hello", sockfd, &servaddr, 1));
+    printf("3: %llu\n", do_get_request("3hello", "3hello", sockfd, &servaddr, 1));
+    printf("3: %llu\n", do_get_request("199hello", "199hello", sockfd, &servaddr, 1));
+
+
+
+
+
+//    printf("1: %llu\n", do_get_request("1", "b", sockfd, &servaddr, 1));
 }
 
 //printf("rounds: %llu\n", rounds);
