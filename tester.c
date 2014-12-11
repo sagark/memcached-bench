@@ -163,8 +163,8 @@ uint64_t rounds = 20000;
     
 */
 
-char key[300];
-char value[2000];
+char* key = malloc( sizeof(char) * (300) );
+char* value = malloc( sizeof(char) * (1301) );;
 unsigned int IAtime;
 uint64_t latency;
 
