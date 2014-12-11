@@ -1,7 +1,10 @@
+from __future__ import print_function
 from scipy.stats import genextreme, genpareto
 from math import floor, log10
 import argparse
 import random
+import pylibmc
+import sys
 
 def key_distribution(num_samples):
     dist = genextreme(30.7984, 8.20449, 0.078688)
@@ -78,11 +81,17 @@ def main():
     keys = get_keys(args.samples, key_distribution)
     values = get_keys(args.samples, value_distribution)
     IAs = get_IAs(args.samples)
+    mc = pylibmc.Client(["127.0.0.1"])
+    temp_dict = {}
+
+    for i in range(len(keys)):
+        temp_dict[keys[i]] = values[i]
 
     output = []
 
     for i in range(len(keys)):
-        output += [keys[i], values[i], IAs[i]]
+        mc.set(keys[i], temp_dict[keys[i]])
+        output += [keys[i], temp_dict[keys[i]], IAs[i]]
 
     print("\n".join(output))
 

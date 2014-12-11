@@ -9,6 +9,8 @@
 
 #include <mach/clock.h>
 #include <mach/mach.h>
+#include <stdlib.h>
+#include <netdb.h>
 
 // memcached defines
 #define MAGIC_NUM        0x80
@@ -129,8 +131,8 @@ t2 = mach_absolute_time();
 int main(int argc, char *argv[])
 {
 
-//char* host = "127.0.0.1";
-char* host = "172.16.1.2";
+char* host = "127.0.0.1";
+//char* host = "172.16.1.2";
 
 struct hostent *hp;     /* host information */
 struct sockaddr_in servaddr;    /* server address */
@@ -159,8 +161,8 @@ uint64_t rounds = 20000;
     
 */
 
-char* key;
-char* value;
+char* key = malloc( sizeof(char) * (300) );;
+char* value = malloc( sizeof(char) * (2000));
 double IAtime;
 
 for (int i = 0; i < rounds; i++) {
@@ -168,7 +170,7 @@ for (int i = 0; i < rounds; i++) {
     //uint64_t result = 
     gets(key);
     gets(value);
-    scanf("%lf", &IAtime);
+    scanf("%lf\n", &IAtime);
     printf("%d: %llu\n", i, do_get_request(key, value, sockfd, &servaddr, 1));
     usleep(IAtime);
 }
