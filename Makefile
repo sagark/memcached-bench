@@ -1,6 +1,8 @@
+SAMPLES?=1000
+
 all:
 	gcc -lmemcached -g -o tester tester.c
 
 run:
-	./tester > out
+	python distributions.py ${SAMPLES} | ./tester ${SAMPLES} > out
 	python dataprocess.py
