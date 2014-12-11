@@ -12,3 +12,10 @@ def value_distribution(num_samples):
 def inter_arrival_dist(num_samples):
     dist = genpareto(0, 16.0292, 0.154971)
     return dist.rvs(num_samples)
+
+
+def gen_dist(num_samples):
+    a = key_distribution(num_samples)
+    b = value_distribution(num_samples)
+    c = inter_arrival_dist(num_samples)
+
