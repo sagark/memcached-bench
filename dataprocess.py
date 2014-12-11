@@ -1,19 +1,24 @@
 import numpy as np
 from pylab import *
 
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
 
-a = file("out");
+hfile = file("output_data/accelerator_onekey_94hello");
+sfile = file("output_data/software_onekey_94hello");
 
 h = []
 s = []
 
-b = a.readlines()
+bh = hfile.readlines()
+bs = sfile.readlines()
 
-for x in b:
-    if "h" in x:
-        h.append(int(x.split(" ")[1].replace("\n", "")))
-    else:
-        s.append(int(x.split(" ")[1].replace("\n", "")))
+for x in bh:
+    h.append(int(x.split(" ")[1].replace("\n", "")))
+
+for x in bs:
+    s.append(int(x.split(" ")[1].replace("\n", "")))
+
 
 
 
@@ -33,6 +38,11 @@ for x in range(11):
     percentilesh.append(np.percentile(h, 10*x))
     percentiless.append(np.percentile(s, 10*x))
 
+a = a[0:-1]
+percentilesh = percentilesh[0:-1]
+percentiless = percentiless[0:-1]
+
+
 print(a)
 print(percentilesh)
 print(percentiless)
@@ -42,9 +52,24 @@ print("MAXES:")
 print(max(h))
 print(max(s))
 
-
+title("Get Request Latency")
+xlabel("Percentile")
+ylabel("Latency (us)")
 plot(a, percentilesh)
 plot(a, percentiless)
 grid(True)
+green_patch = mpatches.Patch(color='green', label='Requests served by memcached on Rocket')
+blue_patch = mpatches.Patch(color='blue', label='Requests served by accelerator')
+
+legend(handles=[green_patch, blue_patch]) #bbox_to_anchor=(1, 0), bbox_transform=plt.gcf().transFigure)
+
+#legend( handles=[red_patch, blue_patch],  bbox_to_anchor=(1, 1),
+#           bbox_transform=plt.gcf().transFigure)
+
+
+#handles, labels = get_legend_handles_labels()
+#legend(handles, labels)
+
+
 savefig("test.png")
 show()
