@@ -62,6 +62,7 @@ def get_keys(num_samples, dist_function, max_size = 10000):
         else:
             key = str(ind)
         ind = max(int(ind), int(floor(log10(max_size)) + 1 ))
+        ind = min(int(ind), 1300)
         key = key[:ind]
         for _ in range(len(key), ind):
             key += '0'
@@ -71,7 +72,7 @@ def get_keys(num_samples, dist_function, max_size = 10000):
 def get_IAs(num_samples):
     IAs = []
     for sample in inter_arrival_dist(num_samples):
-        IAs.append(str(sample))
+        IAs.append(str(int(sample)))
     return IAs
 
 def main():
@@ -90,6 +91,7 @@ def main():
     output = []
 
     for i in range(len(keys)):
+        #print(keys[i], temp_dict[keys[i]], file=sys.stderr)
         mc.set(keys[i], temp_dict[keys[i]])
         output += [keys[i], temp_dict[keys[i]], IAs[i]]
 

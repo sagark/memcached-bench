@@ -110,6 +110,7 @@ uint64_t t1, t2;
 t2 = mach_absolute_time();
 
   double duration_ns = (double)(t2 - t1) * conversion_factor;  
+  uint64_t duration_us;
 
 #ifdef DEBUG_PRINTS
     for (int i = 0; i < 64; i++) {
@@ -124,7 +125,8 @@ t2 = mach_absolute_time();
         printf("VERIFY FAIL");
         exit(0);
     }
-    return duration_ns/1000;
+    duration_us = (uint64_t) (duration_ns / 1000);
+    return duration_us;
 }
 
 
@@ -161,18 +163,23 @@ uint64_t rounds = 20000;
     
 */
 
-char* key = malloc( sizeof(char) * (300) );;
-char* value = malloc( sizeof(char) * (2000));
-double IAtime;
+char key[300];
+char value[2000];
+unsigned int IAtime;
+uint64_t latency;
 
 for (int i = 0; i < rounds; i++) {
     //printf("round # %llu \n", i);
     //uint64_t result = 
     gets(key);
+    printf("%s\n", key);
     gets(value);
-    scanf("%lf\n", &IAtime);
-    printf("%d: %llu\n", i, do_get_request(key, value, sockfd, &servaddr, 1));
-    usleep(IAtime);
+    printf("%s\n", value);
+    scanf("%d\n", &IAtime);
+    printf("%u\n", IAtime);
+    latency = do_get_request(key, value, sockfd, &servaddr, 1);
+    printf("%d: %llu\n", i, latency);
+    usleep((useconds_t) IAtime);
 }
 
 //printf("rounds: %llu\n", rounds);
