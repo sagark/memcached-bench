@@ -162,17 +162,21 @@ uint64_t rounds = 20000;
     
 */
 
-std::string key, value;
-double IAtime;
 
 for (int i = 0; i < rounds; i++) {
     //printf("round # %llu \n", i);
     //uint64_t result = 
-    std::cin >> key;
-    std::cin >> value;
-    std::cin >> IAtime;
-    printf("%d: %llu\n", i, do_get_request(key, value, sockfd, &servaddr, 1));
-    usleep(IAtime);
+    printf("0: %llu\n", do_get_request("0hello", "0hello", sockfd, &servaddr, 1));
+    printf("1: %llu\n", do_get_request("1hello", "1hello", sockfd, &servaddr, 1));
+    printf("2: %llu\n", do_get_request("2hello", "2hello", sockfd, &servaddr, 1));
+    printf("3: %llu\n", do_get_request("3hello", "3hello", sockfd, &servaddr, 1));
+    printf("3: %llu\n", do_get_request("199hello", "199hello", sockfd, &servaddr, 1));
+
+
+
+
+
+//    printf("1: %llu\n", do_get_request("1", "b", sockfd, &servaddr, 1));
 }
 
 //printf("rounds: %llu\n", rounds);
