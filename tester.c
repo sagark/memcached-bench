@@ -1,9 +1,6 @@
-#include<libmemcached/memcached.h>
-
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <libmemcached/memcached.h>
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -162,15 +159,16 @@ uint64_t rounds = 20000;
     
 */
 
-std::string key, value;
+char* key;
+char* value;
 double IAtime;
 
 for (int i = 0; i < rounds; i++) {
     //printf("round # %llu \n", i);
     //uint64_t result = 
-    std::cin >> key;
-    std::cin >> value;
-    std::cin >> IAtime;
+    gets(key);
+    gets(value);
+    scanf("%lf", &IAtime);
     printf("%d: %llu\n", i, do_get_request(key, value, sockfd, &servaddr, 1));
     usleep(IAtime);
 }

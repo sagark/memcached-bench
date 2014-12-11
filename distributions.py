@@ -84,7 +84,7 @@ def main():
     for i in range(len(keys)):
         output += [keys[i], values[i], IAs[i]]
 
-    print(" ".join(output))
+    print("\n".join(output))
 
 if __name__ == "__main__":
     main()
