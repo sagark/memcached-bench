@@ -173,12 +173,8 @@ for (int i = 0; i < rounds; i++) {
     //printf("round # %llu \n", i);
     //uint64_t result = 
     gets(key);
-    printf("Key: %s\n", key);
     gets(value);
-    printf("Value: %s\n", value);
-    printf("ValueLen: %lu\n", strlen(value));
     scanf("%u\n", &IAtime);
-    printf("IATime: %u\n", IAtime);
     latency = do_get_request(key, value, sockfd, &servaddr, 1);
     printf("%d: %llu\n", i, latency);
     usleep((useconds_t) IAtime);
