@@ -94,6 +94,8 @@ def main():
         #print(keys[i], temp_dict[keys[i]], file=sys.stderr)
         mc.set(keys[i], temp_dict[keys[i]])
         output += [keys[i], temp_dict[keys[i]], IAs[i]]
+        if mc.get(keys[i]) != temp_dict[keys[i]]:
+            print("Failed!!", file=sys.stderr)
 
     print("\n".join(output))
 

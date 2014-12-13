@@ -89,7 +89,7 @@ uint64_t do_get_request(char* request_key, char* expected_value, int sockfd, str
 #endif
 
     int n;    
-    char recvline[1000];
+    char recvline[1500];
 
 
     // start timer
@@ -121,8 +121,9 @@ t2 = mach_absolute_time();
         printf("%c ", 0xFF & recvline[i]);
     }
 #endif
+
     if (!verify_response(recvline, expected_value)) {
-        printf("VERIFY FAIL");
+        printf("VERIFY FAIL\n");
         exit(0);
     }
     duration_us = (uint64_t) (duration_ns / 1000);
@@ -163,20 +164,21 @@ uint64_t rounds = 20000;
     
 */
 
-char* key = malloc( sizeof(char) * (300) );
-char* value = malloc( sizeof(char) * (1301) );;
-unsigned int IAtime;
 uint64_t latency;
+char key[300];
+char value[1400];
+unsigned int IAtime;
 
 for (int i = 0; i < rounds; i++) {
     //printf("round # %llu \n", i);
     //uint64_t result = 
     gets(key);
-    printf("%s\n", key);
+    printf("Key: %s\n", key);
     gets(value);
-    printf("%s\n", value);
-    scanf("%d\n", &IAtime);
-    printf("%u\n", IAtime);
+    printf("Value: %s\n", value);
+    printf("ValueLen: %lu\n", strlen(value));
+    scanf("%u\n", &IAtime);
+    printf("IATime: %u\n", IAtime);
     latency = do_get_request(key, value, sockfd, &servaddr, 1);
     printf("%d: %llu\n", i, latency);
     usleep((useconds_t) IAtime);
