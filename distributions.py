@@ -6,15 +6,47 @@ import random
 import pylibmc
 import sys
 
+"""
+Uncomment one of the key_distribution methods, value_distribution methods and inter_arrival_dist methods. Comments in each of those methods say where they're from.
+"""
+
 def key_distribution(num_samples):
+    """
+    Facebook ETC key distribution
+    """
     dist = genextreme(30.7984, 8.20449, 0.078688)
+    #dist = norm(40, 2)
+    #dist = norm(40, 5)
+    #dist = norm(40, 10)
+    #dist = unif(30, 40)
+    #dist = unif(20, 50)
+    #dist = pareto(0.1)
+    #dist = pareto(0.5)
+    #dist = pareto(1)
     return dist.rvs(num_samples)
 
 def value_distribution(num_samples):
+    """
+    Facebook ETC value distribution
+    """
+    #dist = norm(15, 2)
+    #dist = norm(15, 5)
+    #dist = norm(15, 10)
+    #dist = unif(30, 40)
+    #dist = unif(20, 50)
+    #dist = pareto(0.1)
+    #dist = pareto(0.5)
+    #dist = pareto(1)
     dist = genpareto(0.348238, loc=0, scale=214.476)
     return dist.rvs(num_samples)
 
 def inter_arrival_dist(num_samples):
+    """
+    Facebook ETC IA time distribution (in general)
+    """
+    zero_out = False
+    if zero_out:
+        return [0]*num_samples
     dist = genpareto(0.154971, loc=15, scale=16.0292)
     number = random.random()
     output = []
