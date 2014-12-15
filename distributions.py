@@ -1,5 +1,5 @@
 from __future__ import print_function
-from scipy.stats import genextreme, genpareto, norm, uniform, pareto
+from scipy.stats import genextreme, genpareto
 from math import floor, log10
 import argparse
 import random
@@ -10,38 +10,25 @@ import sys
 Uncomment one of the key_distribution methods, value_distribution methods and inter_arrival_dist methods. Comments in each of those methods say where they're from.
 """
 
-tests = { "ETC": [genextreme(30.7984, 8.20449, 0.078688), genpareto(0.348238, loc=0, scale=214.476)],
-          "NORM": [norm(40, 10), norm(15, 10)],
-          "UNIF": [uniform(30, 40), uniform(30, 40)],
-          "PARETO": [pareto(0.1), pareto(0.1)]
-          }
-
-chosen = "PARETO"
-
-
-
-
 def key_distribution(num_samples):
     """
     Facebook ETC key distribution
     """
-    #dist = genextreme(30.7984, 8.20449, 0.078688) # 1
-    #dist = norm(40, 2) # 2
-    #dist = norm(40, 5) # 3
-    #dist = norm(40, 10) # 4
-    #dist = unif(30, 40) # 5
-    #dist = unif(20, 50) # 6
-    #dist = pareto(0.1) # 7
-    #dist = pareto(0.5) # 8
-    #dist = pareto(1) # 9
-    dist = tests[chosen][0]
+    dist = genextreme(30.7984, 8.20449, 0.078688)
+    #dist = norm(40, 2)
+    #dist = norm(40, 5)
+    #dist = norm(40, 10)
+    #dist = unif(30, 40)
+    #dist = unif(20, 50)
+    #dist = pareto(0.1)
+    #dist = pareto(0.5)
+    #dist = pareto(1)
     return dist.rvs(num_samples)
 
 def value_distribution(num_samples):
     """
     Facebook ETC value distribution
     """
-    #dist = genpareto(0.348238, loc=0, scale=214.476)
     #dist = norm(15, 2)
     #dist = norm(15, 5)
     #dist = norm(15, 10)
@@ -50,7 +37,7 @@ def value_distribution(num_samples):
     #dist = pareto(0.1)
     #dist = pareto(0.5)
     #dist = pareto(1)
-    dist = tests[chosen][1]
+    dist = genpareto(0.348238, loc=0, scale=214.476)
     return dist.rvs(num_samples)
 
 def inter_arrival_dist(num_samples):
@@ -99,14 +86,14 @@ def inter_arrival_dist(num_samples):
             output.append(dist.rvs())
     return output
 
-def get_keys(num_samples, dist_function, max_size = 100):
+def get_keys(num_samples, dist_function, max_size = 10000):
     keys = []
     for ind in dist_function(num_samples):
         if ind < 0:
             key = str(-ind)
         else:
             key = str(ind)
-        ind = min(int(ind), max_size)
+        ind = max(int(ind), int(floor(log10(max_size)) + 1 ))
         ind = min(int(ind), 1300)
         key = key[:ind]
         for _ in range(len(key), ind):
@@ -127,7 +114,7 @@ def main():
     keys = get_keys(args.samples, key_distribution)
     values = get_keys(args.samples, value_distribution)
     IAs = get_IAs(args.samples)
-    mc = pylibmc.Client(["172.16.1.2"])
+    mc = pylibmc.Client(["127.0.0.1"])
     temp_dict = {}
 
     for i in range(len(keys)):
@@ -139,8 +126,8 @@ def main():
         #print(keys[i], temp_dict[keys[i]], file=sys.stderr)
         mc.set(keys[i], temp_dict[keys[i]])
         output += [keys[i], temp_dict[keys[i]], IAs[i]]
-#        if mc.get(keys[i]) != temp_dict[keys[i]]:
-#            print("Failed!!", file=sys.stderr)
+        if mc.get(keys[i]) != temp_dict[keys[i]]:
+            print("Failed!!", file=sys.stderr)
 
     print("\n".join(output))
 
