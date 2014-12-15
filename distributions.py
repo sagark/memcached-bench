@@ -99,14 +99,14 @@ def inter_arrival_dist(num_samples):
             output.append(dist.rvs())
     return output
 
-def get_keys(num_samples, dist_function, max_size = 10000):
+def get_keys(num_samples, dist_function, max_size = 100):
     keys = []
     for ind in dist_function(num_samples):
         if ind < 0:
             key = str(-ind)
         else:
             key = str(ind)
-        ind = max(int(ind), int(floor(log10(max_size)) + 1 ))
+        ind = min(int(ind), max_size)
         ind = min(int(ind), 1300)
         key = key[:ind]
         for _ in range(len(key), ind):
@@ -139,8 +139,8 @@ def main():
         #print(keys[i], temp_dict[keys[i]], file=sys.stderr)
         mc.set(keys[i], temp_dict[keys[i]])
         output += [keys[i], temp_dict[keys[i]], IAs[i]]
-        if mc.get(keys[i]) != temp_dict[keys[i]]:
-            print("Failed!!", file=sys.stderr)
+#        if mc.get(keys[i]) != temp_dict[keys[i]]:
+#            print("Failed!!", file=sys.stderr)
 
     print("\n".join(output))
 

@@ -42,14 +42,14 @@ int init_sock() {
 }
 
 int verify_response(char * result_packet, char * expected_value) {
-    int a = strlen(expected_value);
+/*    int a = strlen(expected_value);
     for (int b = 0; b < a; b++) {
         if (result_packet[36+b] != expected_value[b]) {
             printf("%c vs %c\n", result_packet[36+b], expected_value[b]);
             return 0;
         }
 
-    }
+    }*/
     return 1;
 }
 
@@ -134,8 +134,8 @@ t2 = mach_absolute_time();
 int main(int argc, char *argv[])
 {
 
-char* host = "127.0.0.1";
-//char* host = "172.16.1.2";
+//char* host = "127.0.0.1";
+char* host = "172.16.1.2";
 
 struct hostent *hp;     /* host information */
 struct sockaddr_in servaddr;    /* server address */
@@ -158,7 +158,7 @@ int sockfd = init_sock();
 
 uint64_t sum_latency_software = 0;
 uint64_t sum_latency_hardware = 0;
-uint64_t rounds = 20000;
+uint64_t rounds = 2000;
 
 /*void fill_string (char* buf, int n) {
     
