@@ -11,12 +11,12 @@ Uncomment one of the key_distribution methods, value_distribution methods and in
 """
 
 tests = { "ETC": [genextreme(30.7984, 8.20449, 0.078688), genpareto(0.348238, loc=0, scale=214.476)],
-          "NORM": [norm(40, 2), norm(15, 2)],
+          "NORM": [norm(40, 10), norm(15, 10)],
           "UNIF": [uniform(30, 40), uniform(30, 40)],
           "PARETO": [pareto(0.1), pareto(0.1)]
           }
 
-chosen = "ETC"
+chosen = "PARETO"
 
 
 
